@@ -46,4 +46,10 @@ class EpisodeController extends AbstractController
             'episodes' => $episodes
         ]);
     }
+
+    #[Route('/admin/episode/show/{id}', name: 'admin_episode_show')]
+    public function show(int $id, EpisodeRepository $episodeRepository)
+    {
+        $episode = $episodeRepository->find($id);
+    }
 }
