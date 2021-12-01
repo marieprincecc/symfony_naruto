@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use \App\Entity\Episode;
 use App\Form\EpisodeType;
+use App\Repository\EpisodeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 class EpisodeController extends AbstractController
 {
     #[Route('/admin/episode/create', name: 'admin_episode_create')]
-    public function create(Request $request)
+    public function create(Request $request, EntityManagerInterface $em)
     {
         //jai besoin de cree une instance de la class episode
        $episode = new Episode();
@@ -21,10 +23,27 @@ class EpisodeController extends AbstractController
         $form->handleRequest($request);
         //si tu as bien des données a traité dans la requete 
         if($form->isSubmitted() && $form->isValid()){
-            //code
+            $em->persist(($episode));
+
+            $em->flush();
+
+            $this->addFlash("success", "L'épisode" . 
+            $episode->getName() .  " a bien été ajouté.");
+
+            return $this->redirectToRoute("admin_episode_create");
         }
         return $this->render("admin/episode/create.html.twig",[
             'form' => $form->createView()
         ]);
     } 
+
+    #[Route('/admin/episode/list', name: 'admin_episode_list')]
+    public function list(EpisodeRepository $episodeRepository)
+    {
+        $episodes = $episodeRepository->findAll();
+
+        return $this->render("admin/episode/list.html.twig",[
+            'episodes' => $episodes
+        ]);
+    }
 }
