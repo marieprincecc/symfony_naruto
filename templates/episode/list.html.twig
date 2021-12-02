@@ -4,6 +4,9 @@
 
 <div class="container py-5">
     <div class="row">
+    <div class="pagination mt-4 mb-3">
+            {{ knp_pagination_render(episodes) }}
+        </div>
     {% for episode in episodes%}
         <div class="col-sm-12 col-md-6 col-lg-4 mt-3">
             <a href="{{ path('episode_show',{'id': episode.id} ) }}">
@@ -19,6 +22,9 @@
             </a>
         </div>
     {% endfor %}
+    <div class="pagination mt-4 mb-3">
+            {{ knp_pagination_render(episodes) }}
+        </div>
     </div>
 </div>
 

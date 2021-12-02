@@ -3,18 +3,23 @@
 namespace App\Controller;
 
 use App\Repository\EpisodeRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 class EpisodeController extends AbstractController
 {
     #[Route('/episode/list', name: 'episode_list')]
-    public function list(EpisodeRepository $episodeRepository)
+    public function list(EpisodeRepository $episodeRepository, PaginatorInterface $paginator, Request $request)
     {
-        $episodes = $episodeRepository->findAll();
+        $episodes = $paginator->paginate(
+            $episodeRepository->findAll(),
+            $request->query->getInt('page', 1),6
+        );
 
-        return $this->render("episode/list.html.twig",[
+        return $this->render("episode/list.html.twig", [
             'episodes' => $episodes
         ]);
     }
