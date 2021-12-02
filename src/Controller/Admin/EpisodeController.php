@@ -8,6 +8,7 @@ use App\Repository\EpisodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class EpisodeController extends AbstractController
@@ -48,8 +49,35 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/admin/episode/show/{id}', name: 'admin_episode_show')]
-    public function show(int $id, EpisodeRepository $episodeRepository)
+    public function show(int $id, EpisodeRepository $episodeRepository): Response
     {
         $episode = $episodeRepository->find($id);
+
+        if (!$episode) {
+            $this->addFlash("danger","L'épisode est introuvable.");
+            return $this->redirectToRoute("admin_episode_list");
+        }
+
+        return $this->render("admin/episode/show.html.twig",[
+            "episode" => $episode
+        ]);
+    }
+
+    #[Route('/admin/episode/delete/{id}', name: 'admin_episode_delete')]
+    public function delete(int $id,EpisodeRepository $episodeRepository, EntityManagerInterface $em): Response
+    {
+        $episode= $episodeRepository->find($id);
+
+        if (!$episode) {
+            $this->redirectToRoute("admin_episode_list");
+        }
+
+        $em->remove($episode);
+
+        $em->flush();
+
+        $this->addFlash("success","L'épisode a bien ete supprimé");
+
+        return $this->redirectToRoute("admin_episode_list");
     }
 }
