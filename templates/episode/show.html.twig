@@ -57,7 +57,15 @@
                 </div>
                 <div class="card-body">
                     {% if app.user %}
-                        <p>...</p>
+
+                        {{ form_start(form) }}
+
+                         {{ form_widget(form) }}
+
+                        <button class="btn btn-primary mt-3" type= "submit"><i class="fas fa-paper-plane"></i> Envoyer</button>
+                         
+                         {{ form_end(form) }}
+                         
                     {% else %}
                         <p>Vous devez être connecté pour ajouter un commentaire.</p>
                         <a href="{{ path('app_register') }}" class="btn btn-link"><i class="fas fa-user"></i> Créer un compte</a>
